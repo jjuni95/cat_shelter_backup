@@ -145,7 +145,7 @@ ul {
 								</button>
 							</div>
 							<div>
-								<button type="button" id="searchId">검색</button>
+								<button id="searchId">검색</button>
 							</div>
 						</div>
 					</div>
@@ -340,7 +340,10 @@ function goCatAdoptListMainPage(){
 }
 
 
-  $('#searchId').on("click", function(e){
+ /*
+ ajax 좋은 승부였다...
+ 
+ $('#searchId').on("click", function(e){
 	e.preventDefault();
 	console.log("1234");
 		var catGender = $("#catGender").val();
@@ -348,22 +351,28 @@ function goCatAdoptListMainPage(){
 		var catName = $("#catName").val();
 		 console.log(catGender);
 	$.ajax({
-		url: "/CatAdoptListPage",
+		url: "/CatAdoptFilter",
 		type: "get" ,
 		dataType: "json",
 		contentType: "application/json",
-		data:
-		/* 	"catGender" : catGender,
+		data:{
+		 	"catGender" : catGender,
 			"catAge" : catAge,
-			"catName" : catName */
-			JSON.stringify(catGender)
-		,
+			"catName" : catName 
+			 JSON.stringify(catGender) 
+		},
 		success:function(data){
-			console.log(data.catName);
+			const obj = JSON.parse(JSON.stringify(data));
+			console.log(JSON.stringify(obj));
+			if(!data)
+				console.log("데이터없음");
+			else console.log("있음");
 		}
 
 	})
 })  
+
+*/
 
 /*]]>*/
 </script>

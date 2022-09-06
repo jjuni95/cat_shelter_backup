@@ -45,23 +45,20 @@ public class CatAdoptController {
     
     
     @RequestMapping("/CatAdoptListPage")
-	@ResponseBody 
-    public PagingResponse<CatListAdoptJoinDTO> boardlist(@ModelAttribute("params") final SearchDTO params ,Model model) {
+    public String boardlist(@ModelAttribute("params") final SearchDTO params ,Model model) {
 
 //    	   List<CatAdoptDTO> catAdoptDto = catAdoptService.findAllBoard();
     	PagingResponse<CatListAdoptJoinDTO> catListAdoptJoinDTO = catAdoptService.findAllBoard(params);
            model.addAttribute("catpost", catListAdoptJoinDTO);
-           PagingResponse<CatListAdoptJoinDTO> aa =  catAdoptService.findAllBoard(params);
-//           System.out.print(aa.getList());
-        return aa;
+   
+        return "CatAdoptListPage";
     }
     
-	/*
-	 * @RequestMapping("/CatAdoptListPage")
-	 * 
-	 * @RequestBody
-	 * 
-	 */
+//    
+//    @RequestMapping("/CatAdoptFilter")
+//    @ResponseBody
+//    public PagingResponse<CatListAdoptJoinDTO> catFilter
+//  
     
     //카카오페이
     @RequestMapping("/payinfopage")
