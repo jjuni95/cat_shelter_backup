@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kosmo.catpunch.mapper.CatAdoptMapper">
+
+    <!-- cat_adopt 테이블 전체 컬럼 -->
+    <sql id="adoptColumns">
+          ca_id
+        , fk_caid
+        , catadopt_image
+        , catadopt_text
+        , catadopt_writedate
+        , catadopt_update
+        , catadopt_deletedate
+        , catadopt_show
+    </sql>
+    
+    <!-- cat_list와 cat_adopt join -->
+        <sql id="CatListAdoptJoinColumns">
+          ca_id
+        , fk_caid
+        , catadopt_image
+        , catadopt_text
+        , catadopt_show
+        , cat_adopt
+        , cat_age
+        , cat_gender
+        , cat_name
+        , cat_color
+        , cat_breed
+        , cat_supportok
+       
+    </sql>
+    
+  <!-- 고양이 필터 검색 -->
+    <sql id="search">
+      
+        <!-- 검색유형이 나이일때 # -->
+        <if test=" catAge != null and catAge != '' ">
+            <choose>
+                <when test="catAge == 1">
+                    AND cat_age &lt; 2
+                </when>
+                <when test="catAge == 2">
+                    <![CDATA[
+                    AND 3 <= cat_age and cat_age <=8
+                    ]]>
+                </when>
+                <when test="catAge == 3">
+                    AND 9 &lt; cat_age
+                </when>
+            </choose>
+        </if>
+         
+        <!-- 검색유형이 성별일때 -->
+        <if test="catGender != null and catGender != ''">
+            AND cat_gender = #{catGender}
+        </if>
+         
+        <!-- 검색 유형이 이름일 때 -->
+        <if test="catName != null and catName != ''">
+            AND cat_name LIKE CONCAT('%', #{catName}, '%')
+        </if>
+   </sql>
+    
+    
+    <!-- 게시글 저장 
+    <insert id="save" parameterType="com.kosmo.catpunch.dto.CatAdoptDTO">
+        INSERT INTO cat_adopt (
+            <include refid="adoptColumns" />
+        ) VALUES (
+              #{ca_id}
+            , #{fk_caid}
+            , #{catadopt_image}
+            , #{catadopt_text}
+            , NOW()
+            , null
+            , null
+            , 0
+            , 0
+            , 0
+        )
+    </insert> -->
+    
+    
+     <!--
+      보호동물 리스트 조회  join
+      이미지 클릭하면 상세내용, 결연여부 가져오기, 페이징, 상세검색 용도
+     -->
+    <select id="catAdoptFindAll" parameterType="com.kosmo.catpunch.common.dto.SearchDTO"
+    							resultType="com.kosmo.catpunch.dto.CatListAdoptJoinDTO">
+        SELECT
+            <include refid="CatListAdoptJoinColumns" />
+        FROM
+            cat_adopt
+        LEFT JOIN cat_list
+        ON 
+        cat_adopt.fk_caid = cat_list.c_id
+     	WHERE
+            catadopt_show = 0
+            <include refid="search"/>
+        ORDER BY
+            ca_id DESC
+        LIMIT #{pagination.limitStart}, #{recordSize}
+         
+    </select>
+    
+     <!-- 게시글 수 카운팅 -->
+    <select id="count" parameterType="com.kosmo.catpunch.common.dto.SearchDTO" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            cat_adopt
+        WHERE
+            catadopt_show = 0
+    </select>
+    
+ <!--    
+        
+       	결연,입양 리스트 조회
+       	결연, 입양페이지 페이징 하기위한 용도 (고양이 사진 클릭하는 페이지)
+       	
+    <select id="showCatAll" resultType="com.kosmo.catpunch.dto.CatAdoptDTO"
+    							parameterType="com.kosmo.catpunch.common.dto.SearchDTO">
+        SELECT
+            <include refid="adoptColumns" />
+        FROM
+            cat_adopt
+        WHERE
+            catadopt_show = 0
+        ORDER BY
+            ca_id DESC
+        LIMIT #{offset}, #{recordSize}
+    </select> 
+     -->
+     
+     
+     
+     
+
+</mapper>

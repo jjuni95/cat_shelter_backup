@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<title>캣펀치: 입양 결연후원페이지</title>
+
+<style>
+.card-img-top {
+	height: 255px;
+	width: 255px;
+}
+
+#modal.modal-overlay {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 255, 255, 0.25);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+	backdrop-filter: blur(1.5px);
+	-webkit-backdrop-filter: blur(1.5px);
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+#modal .modal-window {
+	background: rgba(255, 255, 255, 0.25);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+	backdrop-filter: blur(13.5px);
+	-webkit-backdrop-filter: blur(13.5px);
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	width: 400px;
+	height: 350px;
+	position: relative;
+	top: -100px;
+	padding: 10px;
+}
+
+#modal .title {
+	padding-left: 10px;
+	display: inline;
+	text-shadow: 1px 1px 2px gray;
+	color: balck;
+}
+
+#modal .title h2 {
+	display: inline;
+	color: black;
+}
+
+#modal .close-area {
+	display: inline;
+	float: right;
+	padding-right: 10px;
+	cursor: pointer;
+	text-shadow: 1px 1px 2px gray;
+	color: black;
+}
+
+#modal .content {
+	margin-top: 20px;
+	padding: 0px 10px;
+	color: black;
+}
+
+#catImg {
+	width: 400px;
+	height: 350px;
+}
+
+ul {
+	list-style: none;
+}
+
+#rufdusId {
+	display: none;
+}
+
+</style>
+</head>
+<body>
+	<!-- 상세검색 -->
+	<div>
+
+<!-- action은 페이지로 가는게아니고 controller에 있는 @RequestMapping을 호출 -->
+		<div>
+			<div>
+				<form id="searchForm" method="get" action="/CatAdoptListPage">
+					<div>
+						<div>
+							<div>
+
+								<div>
+									<label> <span>성별</span> <small>암컷/수컷</small>
+									</label>
+									<div>
+										<div>
+											<select name="catGender" id="catGender" data-msg="성별을 선택해 주세요"
+												data-error-class="u-has-error"
+												data-success-class="u-has-success">
+												<option value="">All</option>
+												<option value="0">암컷</option>
+												<option value="1">수컷</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div>
+									<label> <span>연령</span> <small>puppy/junior/adult/senior</small>
+									</label>
+									<div>
+										<div>
+											<select name="catAge" id="catAge" data-msg="연령을 선택해 주세요"
+												data-error-class="u-has-error"
+												data-success-class="u-has-success">
+												<option value="">All</option>
+												<option value="1">Junior(~ 2살)</option>
+												<option value="2">Adult(3살 ~ 8살)</option>
+												<option value="3">Senior(9살 ~)</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div>
+									<div>
+										<input type="text" name="catName" id="catName" class="form-control" 
+											placeholder="이름(모를경우 비워두기)" aria-label="이름 검색"
+											aria-describedby="searchName">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div>
+							<div>
+								<button type="button" onclick="goCatAdoptListMainPage();">
+									<span>검색설정 초기화</span>
+								</button>
+							</div>
+							<div>
+								<button type="button" id="searchId">검색</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 상세검색 끝-->
+
+
+	<!-- 고양이 리스트 불러오기-->
+
+	<div class="container">
+		<div>
+			<div>
+				<div class="card">
+					<table>
+						<thead>
+						</thead>
+						<tr style=display:inline class="catClass" th:each="post : ${catpost.list}">
+							<td><img id="catImg" th:src="${post.catAdoptImage}" /> <br>
+								<span id="catName" th:text="${post.catName}"></span> <input
+								type="hidden" th:value="${post.catAdoptText}" name="catText">
+								<input id="supportHidden" type="hidden"
+								th:value="${post.catSupportok}"></td>
+						
+						<tbody id="list">
+						 </tbody>
+			
+					</table>
+							<th:block layout:fragment="paging">
+								
+								<!-- class="pagination" : 아래쪽 페이지번호 나오게하는 용도 -->
+                					<nav>
+                    					<ul class="pagination"> 
+                    					</ul>
+                					</nav>
+            					</th:block>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="modal" class="modal-overlay">
+
+		<div class="modal-window">
+			<div class="title"></div>
+			<div class="close-area">X</div>
+			<div class="content">
+				<div class="catInnerText"></div>
+			</div>
+		</div>
+	</div>
+
+
+	<th:block layout:fragment="script">
+		<script th:inline="javascript">
+        /*<![CDATA[*/
+
+        	
+   window.onload = () => {
+	   const pagination = [[ ${catpost.pagination} ]];
+       const params = [[ ${params} ]];
+       drawPage(pagination, params);
+	}
+
+            // 페이지 HTML draw
+            function drawPage(pagination, params) {
+
+                if ( !pagination || !params ) {
+                    document.querySelector('.pagination').innerHTML = '';
+                    return false;
+                }
+
+                let html = '';
+
+                // 첫 페이지, 이전 페이지
+                if (pagination.existPrevPage) {
+                    html += `
+                        <li><a href="javascript:void(0)" onclick="movePage(1);" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                        <li><a href="javascript:void(0)" onclick="movePage(${pagination.startPage - 1});" aria-label="Previous"><span aria-hidden="true">&lsaquo;</span></a></li>
+                    `;
+                }
+
+                // 페이지 번호
+                for (let i = pagination.startPage; i <= pagination.endPage; i++) {
+                    const active = (i === params.page) ? 'class="active"' : '';
+                    html += `<li style=display:inline ${active}><a href="javascript:void(0)" onclick="movePage(${i})">${i}</a></li>`;
+                }
+
+                // 다음 페이지, 마지막 페이지
+                if (pagination.existNextPage) {
+                    html += `
+                        <li><a href="javascript:void(0)" onclick="movePage(${pagination.endPage + 1});" ><span aria-hidden="true">&rsaquo;</span></a></li>
+                        <li><a href="javascript:void(0)" onclick="movePage(${pagination.totalPageCount});" ><span aria-hidden="true">&raquo;</span></a></li>
+                    `;
+                }
+
+                document.querySelector('.pagination').innerHTML = html;
+            }
+
+
+            // 페이지 이동
+            function movePage(page) {
+            	
+            	 const form= document.getElementById('searchForm'); 
+                const queryParams = {
+                    page: (page) ? page : 1,
+                    recordSize: 8,
+                    pageSize: 5,
+                      /* catAge: form.cat_age.value */
+                  /*  searchType: form.searchType.value  */
+                }
+                /* location.href = location.pathname + '?' + new URLSearchParams(queryParams).toString(); */
+            }
+
+    
+	
+const modal = document.getElementById("modal")
+
+var cat = document.querySelectorAll('.catClass')
+var catLength = cat.length;
+for(var i=0; i<catLength ; i++){
+	cat[i].addEventListener("click", function(){
+		 modal.style.display = "flex"
+		 
+	})
+}
+
+let html = ''; 
+//모달창에 텍스트 불러오기
+ $(document).on("click", ".catClass", function () {
+    var catName = $(this).find("span").text(); //이름
+    var catSupportOK = $(this).find("#supportHidden").val(); //결연여부
+    var catDetailText = $(this).find("input[name='catText']").val(); //상세내용
+    
+    
+ 	 html = `
+    
+ 	<h2>${catName} </h2>
+ 	<br>
+	<p>${catDetailText}</p>
+ 	<button>입양하기</button>
+ 		`; 		
+ 		
+    if(catSupportOK ==0){
+    	html += `
+
+        <div>
+    	<form method="post" action="/payinfopage" >
+    	    <input type="hidden" value = ${catName} name="supportcatname" />
+
+        			<button type="submit">결연하기</button>
+        	</div>
+        </form>
+        	
+        	`; 
+    }
+ 		
+   
+    	
+    document.querySelector('.title').innerHTML = html;
+	}); 
+	
+ 
+//모달창의 클로즈(x) 버튼을 누르면 모달창이 꺼지게 하기
+const closeBtn = modal.querySelector(".close-area")
+closeBtn.addEventListener("click", e => {
+    modal.style.display = "none"
+})
+
+// 모달창 바깥 영역을 클릭하면 모달창이 꺼지게 하기
+ modal.addEventListener("click", e => {
+    const evTarget = e.target
+    if(evTarget.classList.contains("modal-overlay")) {
+        modal.style.display = "none"
+    }
+}) 
+
+//모달창이 켜진 상태에서 ESC 버튼을 누르면 모달창이 꺼지게 하기
+window.addEventListener("keyup", e => {
+    if(modal.style.display === "flex" && e.key === "Escape") {
+        modal.style.display = "none"
+    }
+})
+
+
+//입양메인페이지로 이동
+function goCatAdoptListMainPage(){
+	location.href = '/CatAdoptListPage';
+}
+
+
+  $('#searchId').on("click", function(e){
+	e.preventDefault();
+	console.log("1234");
+		var catGender = $("#catGender").val();
+		var catAge = $("#catAge").val();
+		var catName = $("#catName").val();
+		 console.log(catGender);
+	$.ajax({
+		url: "/CatAdoptListPage",
+		type: "get" ,
+		dataType: "json",
+		contentType: "application/json",
+		data:
+		/* 	"catGender" : catGender,
+			"catAge" : catAge,
+			"catName" : catName */
+			JSON.stringify(catGender)
+		,
+		success:function(data){
+			console.log(data.catName);
+		}
+
+	})
+})  
+
+/*]]>*/
+</script>
+	</th:block>
+
+</body>
+</html>

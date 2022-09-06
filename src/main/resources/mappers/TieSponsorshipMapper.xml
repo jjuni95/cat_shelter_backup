@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kosmo.catpunch.mapper.TieSponsorshipMapper">
+
+	<!-- kakaopayapprovalvo 테이블 전체 컬럼 -->
+	<sql id="TieSponsorshipColumns">
+		  aid, tid, cid, sid
+		, amount
+		, card_info
+		, item_name
+		, quantity, tax_free_amount
+		, created_at, approved_at
+	</sql>
+
+	<!-- 정보저장 -->
+
+	
+	
+	
+	 <insert id="TieSponsorshipSave" parameterType="com.kosmo.catpunch.dto.TieSponsorshipVO">
+        INSERT INTO tiesponsorshipvo (
+               aid,tid,cid,sid,amount,card_info,item_name,quantity,approved_at,userid,catname,onesorregural,counting
+               
+        ) VALUES (
+              #{aid},
+              #{tid},
+              #{cid},
+              #{sid},
+              #{amount},
+              #{card_info},
+              #{item_name},
+              #{quantity},
+              #{approved_at},
+              #{userid},
+              #{catname},
+              #{onesorregural},
+              1
+              
+        )
+    </insert>
+	
+	
+	
+	
+</mapper>

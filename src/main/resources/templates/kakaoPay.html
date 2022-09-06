@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>캣펀치: 결연후원</title>
+</head>
+<body>
+ 
+<h1> kakaoPay api로 결연후원하기 </h1>
+ 
+<form method="post" action="/kakaoPay">
+     고양이이름  <input readonly th:value="${catname}" name="supportCatName" />
+     
+     <br>
+     후원금액을 입력하세요 <input type="text" name="money"> 
+   
+   
+   
+    <button>정기결제 시작</button>
+    
+  
+    
+</form>
+
+
+<br>
+<br>
+<br>
+
+
+
+ <form method="post" action="/kakaoPay3">
+    <button>정기결제 2회차 이후 서버에서 자동결제</button>
+</form>
+ 
+ 
+</body>
+</html>

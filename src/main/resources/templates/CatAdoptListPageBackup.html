@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>귀여운 고양이들</title>
+<style>
+.card-img-top {
+	height: 255px;
+	width: 255px;
+}
+
+#modal.modal-overlay {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 255, 255, 0.25);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+	backdrop-filter: blur(1.5px);
+	-webkit-backdrop-filter: blur(1.5px);
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+#modal .modal-window {
+	background: rgba(255, 255, 255, 0.25);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+	backdrop-filter: blur(13.5px);
+	-webkit-backdrop-filter: blur(13.5px);
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	width: 400px;
+	height: 350px;
+	position: relative;
+	top: -100px;
+	padding: 10px;
+}
+
+#modal .title {
+	padding-left: 10px;
+	display: inline;
+	text-shadow: 1px 1px 2px gray;
+	color: white;
+}
+
+#modal .title h2 {
+	display: inline;
+	color: black;
+}
+
+#modal .close-area {
+	display: inline;
+	float: right;
+	padding-right: 10px;
+	cursor: pointer;
+	text-shadow: 1px 1px 2px gray;
+	color: black;
+}
+
+#modal .content {
+	margin-top: 20px;
+	padding: 0px 10px;
+	color: black;
+}
+</style>
+</head>
+<body>
+<!-- 상세검색 -->
+ <div class="container py-1">
+
+
+	<div class="collapse show" id="basicsCollapseTwo" style="">
+		<div class="bg-light space-1">
+			<form class="" id="validate-form" action="/kams/adopt" method="get">
+				<div class="row mb-1 mx-2">
+					<div class="col-lg-10">
+						<div class="row">
+
+							<div class="col-sm-12 col-lg mb-3 mb-lg-0">
+								<label class="d-block"> 
+									<span class="h4 d-block text-dark font-weight-semi-bold mb-0">성별</span> 
+									<small class="d-block text-secondary">암컷/수컷</small>
+								</label>
+								<div class="js-form-message">
+									<div class="js-focus-state form-group">
+										<select name="sex" class="form-control custom-select" data-msg="성별을 선택해 주세요" data-error-class="u-has-error" data-success-class="u-has-success">
+											<option value="">All</option>
+											<option value="암컷">암컷</option>
+											<option value="수컷">수컷</option>
+										</select>
+									</div>
+								</div>			
+							</div>
+
+							<div class="col-sm-12 col-lg mb-3 mb-lg-0">
+								<label class="d-block"> 
+									<span class="h4 d-block text-dark font-weight-semi-bold mb-0">연령</span> 
+									<small class="d-block text-secondary">puppy/junior/adult/senior</small>
+								</label>
+								<div class="js-form-message">
+									<div class="js-focus-state form-group">
+										<select name="birth" class="form-control custom-select" data-msg="연령을 선택해 주세요" data-error-class="u-has-error" data-success-class="u-has-success">
+											<option value="">All</option>
+											<option value="6">Puppy(~ 6개월)</option>
+											<option value="724">Junior(7개월 ~ 2살)</option>
+											<option value="3696">Adult(3살 ~ 8살)</option>
+											<option value="108">Senior(9살 ~)</option>
+										</select>
+									</div>
+								</div>			
+							</div>
+							<div class="col-12 g-pt-15">
+								<div class="input-group">
+									<input type="text" class="form-control" name="name" id="name" placeholder="이름(모를경우 비워두기)" aria-label="이름 검색" aria-describedby="searchName">
+								</div>				
+							</div>	
+						</div>
+					</div>
+					<div class="col-lg-2 g-pt-30 g-pt-60--lg">
+						<div class="g-pb-15 g-pb-sm-0">
+							<a href="/kams/adopt" class="btn btn-sm btn-block g-brd-0 text-secondary g-font-size-14 g-px-0 mb-1">
+								<i class="icon-refresh"></i> <span class="g-text-underline">검색 설정 초기화</span></a>
+						</div>
+						<div class="g-pt-15--lg">
+							<button type="submit" class="btn btn-sm btn-block btn-primary transition-3d-hover mb-1">검색</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6 col-md-3 mb-7">
+				<div class="card">
+					<a id="linkup" href="#"> <img class="card-img-top" id="imgId"
+						alt="Image Description" th:src="${catpost[0].catadopt_image}"/>
+					</a>
+					<div class="card-body p-3">
+						<h2 class="h5 font-weight-bold">
+							<a id="linkup1" href="#" th:text="${catpost[0].cat_name}"></a>
+						</h2>
+						<!-- <p class="text-secondary mb-0">
+							 고양이(품종) <br>  암컷(중성화x) <br>  4개월 / 1.5kg / 치즈 
+						</p> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="modal" class="modal-overlay">
+		<div class="modal-window">
+			<div class="title">
+				<h2 th:text="${catpost[0].cat_name}"></h2>
+			</div>
+			<div class="close-area">X</div>
+			<div class="content">
+				<p th:text="${catpost[0].catadopt_text}"></p>
+				<button>입양하기</button>
+				<button type="button" onclick="goKakaoPage();">결연하기</button>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<script>
+//사진, 이름을 누르면 모달창이 켜지게 하기
+
+	const modal = document.getElementById("modal")
+	const linkup = document.getElementById('linkup')
+	linkup.addEventListener("click", e => {
+	    modal.style.display = "flex"
+	})
+	
+	const linkup1 = document.getElementById('linkup1')
+	linkup1.addEventListener("click", e => {
+	    modal.style.display = "flex"
+	})
+	
+//모달창의 클로즈(x) 버튼을 누르면 모달창이 꺼지게 하기
+const closeBtn = modal.querySelector(".close-area")
+closeBtn.addEventListener("click", e => {
+    modal.style.display = "none"
+})
+
+// 모달창 바깥 영역을 클릭하면 모달창이 꺼지게 하기
+modal.addEventListener("click", e => {
+    const evTarget = e.target
+    if(evTarget.classList.contains("modal-overlay")) {
+        modal.style.display = "none"
+    }
+})
+
+//모달창이 켜진 상태에서 ESC 버튼을 누르면 모달창이 꺼지게 하기
+window.addEventListener("keyup", e => {
+    if(modal.style.display === "flex" && e.key === "Escape") {
+        modal.style.display = "none"
+    }
+})
+
+//결연후원 카카오결제페이지 이동
+function goKakaoPage(){
+	location.href = '/kakaoPay';
+}
+    </script>
+
+</body>
+</html>
